@@ -1,8 +1,13 @@
 #BlueJ class context
 comment0.target=TogaTrail
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ TogaTrail\ here.\r\n\r\n\ @author\ (your\ name)\r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
 comment1.params=
 comment1.target=TogaTrail()
 comment2.params=
 comment2.target=void\ startGame()
-numComments=3
+comment3.params=
+comment3.target=void\ askName()
+comment4.params=name\ level
+comment4.target=void\ store(java.lang.String,\ int)
+comment5.params=
+comment5.target=java.lang.String\ changeWeather()
+numComments=6
