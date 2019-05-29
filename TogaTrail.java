@@ -3,12 +3,13 @@ import java.util.Scanner;
 public class TogaTrail
 {
     private Scanner input;
+    private int shopcount;
     
     private int score;
     private String name;
     
     private int mins;
-    private int miles;
+    private int meters;
     private double money;
     private int falcons;
     private int tshirts;
@@ -22,12 +23,13 @@ public class TogaTrail
     
     public TogaTrail(){
         input = new Scanner(System.in); 
+        shopcount = 0;
         
         score = 0;
         name = "";
         
         mins = 0;
-        miles = 0;
+        meters = 0;
         money = 0.0;
         falcons = 0;
         tshirts = 0;
@@ -75,7 +77,7 @@ public class TogaTrail
             name = "Joekatrina";
         }
         System.out.println();
-        store("Startoga (not Starbucks)", 1);
+        move();
     }
     
     public void store(String name, int level){
@@ -146,6 +148,61 @@ public class TogaTrail
             }
             System.out.println();
         }
+        shopcount++;
+    }
+    
+    public void move(){
+        int pace = 50;
+        int Epace = 0;
+        while(meters<2000){
+            if(meters>1500 && shopcount==2)store("Hermione's House", 3);
+            else if(meters>1000 && shopcount==1)store("Neale and Sons Appraisers and Auctioneers", 2);
+            else if(shopcount==0)store("Startoga (not Starbucks)", 1);
+            
+            if(pace==0)pace+=45;
+            if(pace<50)pace++;
+            if((Math.random()*100)>98.0){
+                System.out.println("You broke your kneecaps. You move half as fast.");
+                pace /= 2;
+            }
+            changeHealth();
+            weather = changeWeather();
+            if(weather.equals("Hurricane")){
+                System.out.println("In a hurricane, lose a day.");
+                pace = 0;
+            } else if(weather.equals("Foggy")){
+                System.out.println("Foggy Weather, slow down.");
+                pace = 0;
+                Epace = pace - 10;
+            } else if(weather.equals("Meatball")){
+                System.out.println("Cloudy with a definite chance of meatballs, free food but slow down.");
+                pace = 0;
+                food += 20;
+                Epace = pace - 5;
+            } else if(weather.equals("Lightningstorm")){
+                System.out.println("You stop to admire the picturesque view of wide arcs of light \n dash across the sky. Part of the view is blocked by SHS.");
+            }
+            if(food==0){lowerHealth();}
+            if(tshirts==0){lowerHealth();}
+            
+            if(health.equals("ded")){
+                if(Math.random()>.5){System.out.println("You died of dysentery, brought on by your bad health.");}
+                else if(Math.random()>.5){System.out.println("You died of typhoid, brought on by your bad health.");}
+                else{System.out.println("You died of yellow fever, brought on by your bad health.");}
+                break;
+            }
+            
+            mins++;
+            food-=10;
+            if(food<0)food = 0;
+            if(pace>0){meters+=pace;}
+            else{meters+=Epace;}
+            GUI();
+        }
+        if(meters>2000){
+            if(supplies<=2){System.out.println("You do not have enough supplies to graduate");}
+            else{System.out.println("Congrats! You have succeeded on the organ trail with " + score + " points!");}
+        }
     }
     
     public String changeWeather(){
@@ -154,5 +211,38 @@ public class TogaTrail
         return weathers[chance];
     }
     
+    public void changeHealth(){
+        double chance = Math.random()*10;
+        if(health.equals("good")){
+            if(chance>9.2){health = "decent";} 
+        }
+        else if(health.equals("decent")){
+            if(chance>9.2){health = "good";} 
+            else if(chance>8.0){health = "bad";}
+        }
+        else if(health.equals("bad")){
+            if(chance>9.2){health = "fair";} 
+            else if(chance>8.0){health = "verge of death";}
+        } else{
+            if(chance>7.5){health = "ded";}
+        }
+    }
+    
+    public void lowerHealth(){
+        if(health.equals("good")){health="decent";}
+        else if(health.equals("decent")){health="bad";}
+        else if(health.equals("bad")){health="verge of death";}
+        else if(health.equals("verge of death")){health="ded";}
+    }
+    
+    public void GUI(){
+        System.out.println("\n\n----------------------");
+        System.out.println("Minute: " + mins);
+        System.out.println("Weather" + weather );
+        System.out.println("Health: " + health);
+        System.out.println("Food: " + food);
+        System.out.println("Meters to Travel: " + (2000-meters) + " m");
+        System.out.println("----------------------\n\n");
+    }
     
 }
