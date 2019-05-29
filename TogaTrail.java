@@ -238,7 +238,7 @@ public class TogaTrail
     public void GUI(){
         System.out.println("\n\n----------------------");
         System.out.println("Minute: " + mins);
-        System.out.println("Weather" + weather );
+        System.out.println("Weather: " + weather );
         System.out.println("Health: " + health);
         System.out.println("Food: " + food);
         System.out.println("Meters to Travel: " + (2000-meters) + " m");
