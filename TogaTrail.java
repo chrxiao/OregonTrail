@@ -157,9 +157,9 @@ public class TogaTrail
         System.out.println("Uh-oh! You reached the " + name + ". You are now in danger!");
         System.out.println(description);
         
-        if(health.equals("good")){percent -= .10;}
-        else if(health.equals("bad")){percent += .10;}
-        else if(health.equals("verge of death")){percent += .20;}
+        if(health.equals("good")){percent -= .05;}
+        else if(health.equals("bad")){percent += .05;}
+        else if(health.equals("verge of death")){percent += .10;}
         
         if (Math.random() < percent){
             System.out.println("Unfortunately, you died.\n");
@@ -195,17 +195,17 @@ public class TogaTrail
             else if(shopcount==0)store("Startoga (not Starbucks)", 1);
             
             if (meters > 900 && dangercount == 2){
-                if (danger("SHS Parking Lot", "A busy parent dropping off their child swerves into you.", .50)){
+                if (danger("SHS Parking Lot", "A busy parent dropping off their child swerves into you.", .65)){
                     break;
                 }
             }
             else if (meters > 625 && dangercount == 1){
-                if (danger("Saratoga Creek", "You must now cross the creek.", .35)){
+                if (danger("Saratoga Creek", "You must now cross the creek.", .45)){
                     break;
                 }
             }
             else if (meters > 100 && dangercount == 0){
-                if (danger("Saratoga Sunnyvale Road", "It's time to jaywalk across the road.", .20)){
+                if (danger("Saratoga Sunnyvale Road", "It's time to jaywalk across the road.", .25)){
                     break;
                 }
             }
@@ -347,7 +347,7 @@ public class TogaTrail
             chariotRepair[ind]--;
         }
         else {
-            System.out.println("Sadly, you were not prepared. You move much slowly now.");
+            System.out.println("Sadly, you were not prepared. You move much more slowly now.");
             pace -= 20; 
         }
         System.out.println();
