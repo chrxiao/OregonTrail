@@ -4,11 +4,13 @@ public class TogaTrail
 {
     private Scanner input;
     private int shopcount;
+    private int dangercount;
     
     private String name;
     
     private int mins;
     private int meters;
+    private int pace;
     private double money;
     private int falcons;
     private int tshirts;
@@ -17,15 +19,18 @@ public class TogaTrail
     private int supplies;
     private String weather;
     private String health; 
+    private boolean knees;
     
     public TogaTrail(){
         input = new Scanner(System.in); 
         shopcount = 0;
+        dangercount = 0;
         
         name = "";
         
         mins = 0;
         meters = 0;
+        pace = 50;
         money = 0.0;
         falcons = 0;
         tshirts = 0;
@@ -34,6 +39,7 @@ public class TogaTrail
         supplies = 0;
         weather = "";
         health = "good";
+        knees = true;
         startGame();
     }
     
@@ -50,7 +56,7 @@ public class TogaTrail
             money = (grade + 8) * 100.0;
         }
         else {
-            System.out.println("You cannot type numbers, therefore you become a freshman");
+            System.out.println("You cannot type numbers, therefore you must be a freshman.");
             grade=1;
             money = (grade + 8) * 100.0;
         }
@@ -75,7 +81,7 @@ public class TogaTrail
     }
     
     public void store(String name, int level){
-        
+        System.out.println("Welcome, " + this.name + "! You arrived at " + name + ".");
         int num = 0;
         
         double[] prices = {50.0,25.0,.50,20.0,20.0,20.0,5.00};
@@ -85,7 +91,7 @@ public class TogaTrail
         
         while (num != 8){
             mins++;
-            System.out.println("Welcome, " + this.name + "! You arrived at " + name + ". What would you like to buy?");
+            System.out.println("What would you like to buy?");
             System.out.println("1. falcons");
             System.out.println("You have " + falcons + " falcons.");
             System.out.println("2. class T-shirts");
@@ -103,13 +109,13 @@ public class TogaTrail
             System.out.println("8. LEAVE " + name.toUpperCase());
             String[] names = {"falcons", "class T-shirts", "food", "chariot wheels", "chariot axles", "chariot tounges", "school supplies"};
             num = Integer.parseInt(input.nextLine());
-            String[] personalizedMessages = {"You need falcons to fly your chariot to school. We suggest 4 falcons.",
-            "You need class T-shirts to stay warm. We suggest 2.", "You need food. We suggest 400 lbs.",
-            "You need wheels if your chariot breaks down. We suggest 1~2", "You need axles if your chariot breaks down. We suggest 1~2.",
-            "You need tongues if your chariot breaks down. We suggest 1~2", "You need school supplies to graduate. We suggest 3."};
+            String[] personalizedMessages = {"You need falcons to fly your chariot to school. We suggest 2 falcons.",
+            "You need class T-shirts to stay warm. We suggest 1.", "You need food to feed yourself and your falcons. We suggest 200 lbs per party member.",
+            "You need wheels if your chariot breaks down. We suggest 1~2.", "You need axles if your chariot breaks down. We suggest 1~2.",
+            "You need tongues if your chariot breaks down. We suggest 1~2.", "You need school supplies to graduate. We suggest 3."};
             if (num >=1 && num<=7){
                 System.out.println(personalizedMessages[num-1]);
-                System.out.println(names[num-1] + " cost $" + prices[num-1] +". You have $" + money + ".");
+                System.out.println(names[num-1].substring(0, 1).toUpperCase() + names[num-1].substring(1) + " cost $" + prices[num-1] +". You have $" + money + ".");
                 System.out.println("How many " + names[num-1] + " would you like?");
                 int sum = Integer.parseInt(input.nextLine());
                 if (money - sum * prices[num-1] >= 0){
@@ -130,7 +136,7 @@ public class TogaTrail
             else if(num==8 && falcons == 0){ 
                 System.out.println("You need falcons");
                 if (money == 0){
-                    System.out.println("You have no money. We will give you a free falcon because you'll die soon anyways.");
+                    System.out.println("You have no money. We will give you a free falcon since you'll die soon anyways.");
                     falcons++;
                 }
                 else {
@@ -145,8 +151,35 @@ public class TogaTrail
         shopcount++;
     }
     
+    public boolean danger(String name, String description, double percent){
+        dangercount++;
+        
+        System.out.println("Uh-oh! You reached the " + name + ". You are now in danger!");
+        System.out.println(description);
+        
+        if(health.equals("good")){percent -= .10;}
+        else if(health.equals("bad")){percent += .10;}
+        else if(health.equals("verge of death")){percent += .20;}
+        
+        if (Math.random() < percent){
+            System.out.println("Unfortunately, you died.\n");
+            return true;
+        }
+        else {
+            if (Math.random() < percent){
+                chariot();
+            }
+            if (Math.random() < percent){
+                if (falcons()){
+                    return true;
+                }
+            }
+            System.out.println("Congratulations! You managed to survive.\n");
+            return false;
+        }
+    }
+    
     public void move(){
-        int pace = 50;
         int Epace = 0;
         while(meters<=1000){
             if(meters>750 && shopcount==2){
@@ -161,24 +194,39 @@ public class TogaTrail
             else if(meters>500 && shopcount==1)store("Neale and Sons Appraisers and Auctioneers", 2);
             else if(shopcount==0)store("Startoga (not Starbucks)", 1);
             
-            if(pace==0)pace+=45;
-            if(pace<50)pace++;
-            if(Math.random() > .96){
-                System.out.println("You broke your kneecaps. You move half as fast.");
-                pace /= 2;
+            if (meters > 900 && dangercount == 2){
+                if (danger("SHS Parking Lot", "A busy parent dropping off their child swerves into you.", .50)){
+                    break;
+                }
+            }
+            else if (meters > 625 && dangercount == 1){
+                if (danger("Saratoga Creek", "You must now cross the creek.", .35)){
+                    break;
+                }
+            }
+            else if (meters > 100 && dangercount == 0){
+                if (danger("Saratoga Sunnyvale Road", "It's time to jaywalk across the road.", .20)){
+                    break;
+                }
             }
             
-            if (Math.random() > .96){
-                String parts[] = {"chariot wheel", "chariot axle", "chariot tongue"};
-                int ind = (int) Math.random() * 3;
-                System.out.println("Your " + parts[ind] + " broke down.");
-                if (chariotRepair[ind] > 0){
-                    System.out.println("Luckily, you were prepared! You will use your spare " + parts[ind]);
-                    chariotRepair[ind]--;
+            if(pace==0)pace+=45;
+            if(pace<50)pace++;
+            
+            if (knees){
+                if (Math.random() > .96){
+                    System.out.println("You broke your kneecaps. You move half as fast.\n");
+                    pace /= 2;
+                    knees = false;
                 }
-                else {
-                    System.out.println("Sadly, you were not prepared. You move much slowly now.");
-                    pace -= 20; 
+            }
+            
+            if (Math.random() > .97){
+                chariot();
+            }
+            if (Math.random() > .97){
+                if (falcons()){
+                    break;
                 }
             }
             
@@ -186,25 +234,27 @@ public class TogaTrail
             weather = changeWeather();
             if(weather.equals("Hurricane")){
                 int timeLoss = (int) Math.random() * 4 + 2;
-                System.out.println("In a hurricane, lose " + timeLoss + " minutes.");
+                System.out.println("In a hurricane. Lose " + timeLoss + " minutes.");
                 mins += timeLoss - 1;
                 pace = 0;
             } else if(weather.equals("Foggy")){
-                System.out.println("Foggy Weather, slow down.");
+                System.out.println("Foggy weather. Slow down.");
                 pace = 0;
                 Epace = pace - 10;
             } else if(weather.equals("Meatball")){
-                System.out.println("Cloudy with a definite chance of meatballs, free food but slow down.");
+                System.out.println("Cloudy with a definite chance of meatballs. Free food but slow down.");
                 pace = 0;
                 food += 20;
                 Epace = pace - 5;
-            } else if(weather.equals("Lightningstorm")){
-                System.out.println("You stop to admire the picturesque view of wide arcs of light \n dash across the sky. Part of the view is blocked by SHS.");
-                if (Math.random()>.95){
-                    System.out.println("You got thunderstruck. You die immediately");
+            } else if(weather.equals("Lightning")){
+                System.out.println("You stop to admire the picturesque view of wide arcs of light dashing across the sky. Part of the view is blocked by SHS.");
+                if (Math.random()>.98){
+                    System.out.println("You got thunderstruck. You die immediately.");
                     break;
                 }
             }
+            System.out.println();
+            
             if(food==0){lowerHealth();}
             if(tshirts==0){lowerHealth();}
             
@@ -216,19 +266,18 @@ public class TogaTrail
             }
             
             mins++;
-            food-=10;
+            food-= 5 * (falcons + 1);
             if(food<0)food = 0;
             if(pace>0){meters+=pace;}
             else{meters+=Epace;}
             
             if(meters>=1000){
-                if(supplies<=2){System.out.println("You do not have enough supplies to graduate");}
+                if(supplies<=2){System.out.println("You do not have enough supplies to graduate.");}
                 else if(mins>=60) {System.out.println("You arrived late to school and lost your legs.");}
-                else{System.out.println("Congrats! You have succeeded on the organ trail with " + calcScore() + " points!");}
+                else{System.out.println("Congratulations " + name + "! You have successfully completed the TogaTrail with " + calcScore() + " points!");}
                 
                 break;
             }
-            
             
             GUI();
             try {
@@ -240,14 +289,13 @@ public class TogaTrail
         }
         
         if (meters < 1000){
-            System.out.println("Good luck! Try again tomorrow!");
+            System.out.println("Rest in peace " + name + ". Try again tomorrow!");
         }
     }
     
     public String changeWeather(){
-        String[] weathers = {"Sunny", "Sunny", "Sunny", "Cloudy", "Cloudy", "Cloudy", "Rainy", "Lightningstorm", "Meatball", "Foggy", "Hurricane"};
-        int chance = (int)(Math.random()*weathers.length);
-        return weathers[chance];
+        String[] weathers = {"Sunny", "Sunny", "Sunny", "Cloudy", "Cloudy", "Cloudy", "Rainy", "Lightning", "Meatball", "Foggy", "Hurricane"};
+        return weathers[(int)(Math.random()*weathers.length)];
     }
     
     public void changeHealth(){
@@ -274,6 +322,37 @@ public class TogaTrail
         else if(health.equals("verge of death")){health="ded";}
     }
     
+    public boolean falcons(){
+        double percent = (double) food / (5 * (falcons + 1));
+        if (health.equals("bad")){percent -= .10;}
+        else if(health.equals("verge of death")){percent -= .20;}
+        
+        if (Math.random() * 100 > percent){
+            System.out.println("Oh no! One of your falcons died.\n");
+            falcons--;
+            if (falcons <= 0){
+                System.out.println("You have no more falcons and are no longer able to go to school.");
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void chariot(){
+        String parts[] = {"chariot wheel", "chariot axle", "chariot tongue"};
+        int ind = (int) (Math.random() * 3);
+        System.out.println("Your " + parts[ind] + " broke down.");
+        if (chariotRepair[ind] > 0){
+            System.out.println("Luckily, you were prepared! You will use your spare " + parts[ind] + ".");
+            chariotRepair[ind]--;
+        }
+        else {
+            System.out.println("Sadly, you were not prepared. You move much slowly now.");
+            pace -= 20; 
+        }
+        System.out.println();
+    }
+    
     public void GUI(){
         System.out.println("\n\n----------------------");
         System.out.println("Minute: " + mins);
@@ -285,7 +364,12 @@ public class TogaTrail
     }
     
     public int calcScore(){
-        return (int) money + (60 - mins); 
+        int score = (int) money + (60 - mins) + falcons + tshirts + food + chariotRepair[0] + chariotRepair[1] + chariotRepair[2] + supplies;
+        if(health.equals("good")){score += 40;}
+        else if(health.equals("decent")){score += 30;}
+        else if(health.equals("bad")){score += 20;}
+        else if(health.equals("verge of death")){score += 10;}
+        return score; 
     }
     
 }
