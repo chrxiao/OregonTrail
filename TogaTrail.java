@@ -5,7 +5,6 @@ public class TogaTrail
     private Scanner input;
     private int shopcount;
     
-    private int score;
     private String name;
     
     private int mins;
@@ -14,9 +13,7 @@ public class TogaTrail
     private int falcons;
     private int tshirts;
     private int food;
-    private int wheels;
-    private int axles;
-    private int tongues;
+    private int[] chariotRepair;
     private int supplies;
     private String weather;
     private String health; 
@@ -25,7 +22,6 @@ public class TogaTrail
         input = new Scanner(System.in); 
         shopcount = 0;
         
-        score = 0;
         name = "";
         
         mins = 0;
@@ -34,9 +30,7 @@ public class TogaTrail
         falcons = 0;
         tshirts = 0;
         food = 0;
-        wheels = 0;
-        axles = 0;
-        tongues = 0;
+        chariotRepair = new int[3];
         supplies = 0;
         weather = "";
         health = "good";
@@ -91,7 +85,7 @@ public class TogaTrail
         
         while (num != 8){
             mins++;
-            System.out.println("You arrived at " + name + ". What would you like to buy?");
+            System.out.println("Welcome, " + this.name + "! You arrived at " + name + ". What would you like to buy?");
             System.out.println("1. falcons");
             System.out.println("You have " + falcons + " falcons.");
             System.out.println("2. class T-shirts");
@@ -99,20 +93,20 @@ public class TogaTrail
             System.out.println("3. food");
             System.out.println("You have " + food + " food.");
             System.out.println("4. chariot wheels");
-            System.out.println("You have " + wheels + " chariot wheels.");
+            System.out.println("You have " + chariotRepair[0] + " chariot wheels.");
             System.out.println("5. chariot axles");
-            System.out.println("You have " + axles + " chariot axles.");
+            System.out.println("You have " + chariotRepair[1] + " chariot axles.");
             System.out.println("6. chariot tongues");
-            System.out.println("You have " + tongues + " chariot tongues.");
+            System.out.println("You have " + chariotRepair[2] + " chariot tongues.");
             System.out.println("7. school supplies");
             System.out.println("You have " + supplies + " school supplies.");
             System.out.println("8. LEAVE " + name.toUpperCase());
             String[] names = {"falcons", "class T-shirts", "food", "chariot wheels", "chariot axles", "chariot tounges", "school supplies"};
             num = Integer.parseInt(input.nextLine());
             String[] personalizedMessages = {"You need falcons to fly your chariot to school. We suggest 4 falcons.",
-            "You need class T-shirts to stay warm. We suggest 2.", "You need food. We suggest 140 lbs",
-            "You need wheels if your chariot breaks down. We suggest 1~2", "You need axles if your chariot breaks down. We suggest 1~2",
-            "You need tongues if your chariot breaks down. We suggest 1~2", "You need school supplies to graduate. We suggest 3"};
+            "You need class T-shirts to stay warm. We suggest 2.", "You need food. We suggest 400 lbs.",
+            "You need wheels if your chariot breaks down. We suggest 1~2", "You need axles if your chariot breaks down. We suggest 1~2.",
+            "You need tongues if your chariot breaks down. We suggest 1~2", "You need school supplies to graduate. We suggest 3."};
             if (num >=1 && num<=7){
                 System.out.println(personalizedMessages[num-1]);
                 System.out.println(names[num-1] + " cost $" + prices[num-1] +". You have $" + money + ".");
@@ -123,9 +117,9 @@ public class TogaTrail
                     if(num==1)falcons += sum;
                     if(num==2)tshirts += sum;
                     if(num==3)food += sum;
-                    if(num==4)wheels += sum;
-                    if(num==5)axles += sum;
-                    if(num==6)tongues += sum;
+                    if(num==4)chariotRepair[0] += sum;
+                    if(num==5)chariotRepair[1] += sum;
+                    if(num==6)chariotRepair[2] += sum;
                     if(num==7)supplies += sum;
                     System.out.println("Purchased! You have $" + money + " left.");
                 }
@@ -154,21 +148,46 @@ public class TogaTrail
     public void move(){
         int pace = 50;
         int Epace = 0;
-        while(meters<2000){
-            if(meters>1500 && shopcount==2)store("Hermione's House", 3);
-            else if(meters>1000 && shopcount==1)store("Neale and Sons Appraisers and Auctioneers", 2);
+        while(meters<=1000){
+            if(meters>750 && shopcount==2){
+                if (name.equals("Hermoine")){
+                    System.out.println("You arrived at Hermione's House. Because you stole her name, she kills you.");
+                    break;
+                }
+                else {
+                    store("Hermione's House", 3);
+                }
+            }
+            else if(meters>500 && shopcount==1)store("Neale and Sons Appraisers and Auctioneers", 2);
             else if(shopcount==0)store("Startoga (not Starbucks)", 1);
             
             if(pace==0)pace+=45;
             if(pace<50)pace++;
-            if((Math.random()*100)>98.0){
+            if(Math.random() > .96){
                 System.out.println("You broke your kneecaps. You move half as fast.");
                 pace /= 2;
             }
+            
+            if (Math.random() > .96){
+                String parts[] = {"chariot wheel", "chariot axle", "chariot tongue"};
+                int ind = (int) Math.random() * 3;
+                System.out.println("Your " + parts[ind] + " broke down.");
+                if (chariotRepair[ind] > 0){
+                    System.out.println("Luckily, you were prepared! You will use your spare " + parts[ind]);
+                    chariotRepair[ind]--;
+                }
+                else {
+                    System.out.println("Sadly, you were not prepared. You move much slowly now.");
+                    pace -= 20; 
+                }
+            }
+            
             changeHealth();
             weather = changeWeather();
             if(weather.equals("Hurricane")){
-                System.out.println("In a hurricane, lose a day.");
+                int timeLoss = (int) Math.random() * 4 + 2;
+                System.out.println("In a hurricane, lose " + timeLoss + " minutes.");
+                mins += timeLoss - 1;
                 pace = 0;
             } else if(weather.equals("Foggy")){
                 System.out.println("Foggy Weather, slow down.");
@@ -181,6 +200,10 @@ public class TogaTrail
                 Epace = pace - 5;
             } else if(weather.equals("Lightningstorm")){
                 System.out.println("You stop to admire the picturesque view of wide arcs of light \n dash across the sky. Part of the view is blocked by SHS.");
+                if (Math.random()>.95){
+                    System.out.println("You got thunderstruck. You die immediately");
+                    break;
+                }
             }
             if(food==0){lowerHealth();}
             if(tshirts==0){lowerHealth();}
@@ -197,11 +220,27 @@ public class TogaTrail
             if(food<0)food = 0;
             if(pace>0){meters+=pace;}
             else{meters+=Epace;}
+            
+            if(meters>=1000){
+                if(supplies<=2){System.out.println("You do not have enough supplies to graduate");}
+                else if(mins>=60) {System.out.println("You arrived late to school and lost your legs.");}
+                else{System.out.println("Congrats! You have succeeded on the organ trail with " + calcScore() + " points!");}
+                
+                break;
+            }
+            
+            
             GUI();
+            try {
+                 Thread.sleep(2000);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        if(meters>2000){
-            if(supplies<=2){System.out.println("You do not have enough supplies to graduate");}
-            else{System.out.println("Congrats! You have succeeded on the organ trail with " + score + " points!");}
+        
+        if (meters < 1000){
+            System.out.println("Good luck! Try again tomorrow!");
         }
     }
     
@@ -214,15 +253,15 @@ public class TogaTrail
     public void changeHealth(){
         double chance = Math.random()*10;
         if(health.equals("good")){
-            if(chance>9.2){health = "decent";} 
+            if(chance>9.5){health = "decent";} 
         }
         else if(health.equals("decent")){
             if(chance>9.2){health = "good";} 
-            else if(chance>8.0){health = "bad";}
+            else if(chance>8.4){health = "bad";}
         }
         else if(health.equals("bad")){
             if(chance>9.2){health = "fair";} 
-            else if(chance>8.0){health = "verge of death";}
+            else if(chance>8.4){health = "verge of death";}
         } else{
             if(chance>7.5){health = "ded";}
         }
@@ -241,8 +280,12 @@ public class TogaTrail
         System.out.println("Weather: " + weather );
         System.out.println("Health: " + health);
         System.out.println("Food: " + food);
-        System.out.println("Meters to Travel: " + (2000-meters) + " m");
+        System.out.println("Meters to Travel: " + (1000-meters) + " m");
         System.out.println("----------------------\n\n");
+    }
+    
+    public int calcScore(){
+        return (int) money + (60 - mins); 
     }
     
 }
